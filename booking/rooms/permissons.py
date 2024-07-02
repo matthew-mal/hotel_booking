@@ -11,6 +11,15 @@ class IsOwnerOrStaff(BasePermission):
         )
 
 
+class IsOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return bool(
+            request.method in SAFE_METHODS
+            or request.user.is_authenticated
+            and obj.username == request.user.username
+        )
+
+
 class AdminOnlyPermission(BasePermission):
     def has_permission(self, request, view):
         # Разрешаем GET запросы всем

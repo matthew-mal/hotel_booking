@@ -4,19 +4,18 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .filters import RoomFilter
 from .models import Booking, MyUser, Room
-from .permissons import AdminOnlyPermission, IsOwnerOrStaff
+from .permissons import AdminOnlyPermission, IsOwner, IsOwnerOrStaff
 from .serializers import BookingSerializer, MyUserSerializer, RoomSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = MyUserSerializer
-    permission_classes = [IsOwnerOrStaff]
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         user = self.request.user
