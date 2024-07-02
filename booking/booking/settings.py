@@ -17,8 +17,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 'drf-yasg',
+
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_filters',
 
     'rooms',
 ]
@@ -64,6 +67,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'rooms.MyUser'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -93,9 +98,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # rest framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 
 SIMPLE_JWT = {
