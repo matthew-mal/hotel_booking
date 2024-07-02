@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -41,8 +43,13 @@ class Booking(models.Model):
     def __str__(self):
         return f'{self.room.name} - {self.user.username} ({self.start_date} to {self.end_date})'
 
-    def calculate_cost(self, end_date, start_date, price_per_day):
-        duration = end_date - start_date
-        days = duration.days
-        cost = days * price_per_day
-        return cost
+    def calculate_cost(self):
+        start_date = datetime.strptime(self.start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(self.end_date, '%Y-%m-%d').date()
+        duration = (end_date - start_date).days
+        self.cost = duration * self.room.price_per_day
+
+    def save(self, *args, **kwargs):
+        if not self.cost:
+            self.calculate_cost()
+        super().save(*args, **kwargs)
