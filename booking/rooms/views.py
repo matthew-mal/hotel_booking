@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -84,11 +86,22 @@ class BookingViewSet(viewsets.ModelViewSet):
         except Room.DoesNotExist:
             return Response({'error': 'Room does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not room.is_available:
-            return Response({'error': 'Room is already taken'}, status=status.HTTP_400_BAD_REQUEST)
+        conflicting_bookings = Booking.objects.filter(
+            room=room,
+            start_date__lt=end_date,
+            end_date__gt=start_date
+        )
 
-        booking = Booking.objects.create(user=request.user, room=room, start_date=start_date,
-                                         end_date=end_date)
+        if conflicting_bookings.exists():
+            return Response({'error': 'Room is already booked for the specified dates'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        booking = Booking.objects.create(
+            user=request.user,
+            room=room,
+            start_date=start_date,
+            end_date=end_date
+        )
 
         room.is_available = False
         room.save()
@@ -103,8 +116,13 @@ class BookingViewSet(viewsets.ModelViewSet):
         if booking.canceled:
             return Response({'error': 'Booking already canceled'}, status=status.HTTP_400_BAD_REQUEST)
 
-        booking.canceled = True
+        today = datetime.now().date()
 
+        if booking.start_date <= today:
+            return Response({'error': 'Cannot cancel booking if it has already started'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        booking.canceled = True
         booking.save()
 
         booking.room.is_available = True
