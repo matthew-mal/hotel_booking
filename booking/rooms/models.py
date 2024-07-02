@@ -34,7 +34,8 @@ class Booking(models.Model):
         return f'{self.room.name} - {self.user.username} ({self.start_date} to {self.end_date})'
 
     def calculate_cost(self, start_date, end_date):
-        duration = start_date - end_date
+        duration = end_date - start_date
         days = duration.days
-        cost_per_day = 10
-        return days * cost_per_day
+        cost_per_day = self.room.price_per_day
+        cost = days * cost_per_day
+        return cost
