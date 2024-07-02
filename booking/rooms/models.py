@@ -35,20 +35,14 @@ class Booking(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     canceled = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.room.name} - {self.user.username} ({self.start_date} to {self.end_date})'
 
-    def calculate_cost(self, start_date, end_date):
+    def calculate_cost(self, end_date, start_date, price_per_day):
         duration = end_date - start_date
         days = duration.days
-        cost_per_day = self.room.price_per_day
-        cost = days * cost_per_day
+        cost = days * price_per_day
         return cost
-
-    def save(self, *args, **kwargs):
-        if not self.cost:
-            self.cost = self.calculate_cost()
-        super().save(*args, **kwargs)
