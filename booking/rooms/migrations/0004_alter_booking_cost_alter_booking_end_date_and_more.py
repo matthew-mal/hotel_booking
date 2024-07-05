@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="room",
             name="is_available",
-            field=models.BooleanField(default=True, verbose_name="Available?"),
+            field=models.BooleanField(default=True, verbose_name="Available now?"),
         ),
         migrations.AlterField(
             model_name="room",

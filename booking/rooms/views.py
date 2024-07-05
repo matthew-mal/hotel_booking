@@ -23,15 +23,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return MyUser.objects.all()
         return MyUser.objects.filter(id=user.id)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
 
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()

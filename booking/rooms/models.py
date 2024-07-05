@@ -27,7 +27,7 @@ class Room(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Price per day"
     )
     capacity = models.IntegerField(verbose_name="Capacity")
-    is_available = models.BooleanField(default=True, verbose_name="Available?")
+    is_available = models.BooleanField(default=True, verbose_name="Available now?")
     room_type = models.CharField(
         max_length=10,
         choices=ROOM_TYPE_CHOICES,
