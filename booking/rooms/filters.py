@@ -7,9 +7,7 @@ from .models import Booking, Room
 class RoomFilter(filters.FilterSet):
     start_date = filters.DateFilter(field_name="start_date", method="filter_by_date")
     end_date = filters.DateFilter(field_name="end_date", method="filter_by_date")
-    room_name = filters.CharFilter(
-        field_name="room_name", method="filter_by_room_number"
-    )
+    room_name = filters.CharFilter(field_name="name", method="filter_by_room_number")
 
     class Meta:
         model = Room

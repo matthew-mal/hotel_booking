@@ -9,14 +9,6 @@ class MyUserSerializer(serializers.ModelSerializer):
         fields = ("username", "password", "email")
         extra_kwargs = {"password": {"write_only": True}}
 
-    def create(self, validated_data):
-        user = MyUser.objects.create_user(
-            username=validated_data["username"],
-            password=validated_data["password"],
-            email=validated_data["email"],
-        )
-        return user
-
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,8 +23,8 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    user = MyUserSerializer(read_only=True)
-    room = RoomSerializer(read_only=True)
+    user = MyUserSerializer
+    room = RoomSerializer
 
     class Meta:
         model = Booking

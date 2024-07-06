@@ -39,10 +39,11 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if self.request.user.is_staff:
+        if user.is_staff:
             return Booking.objects.all().select_related("user", "room")
         return Booking.objects.filter(user=user.id).select_related("user", "room")
 
-    # Про метод cancel
-    # Я видимо не совсем правильно понял пункт про отмену из тз, подумал, что при отмене пользователем,
-    # букинг все равно остается в бд, а удаление записи уже остается за админом/стафом
+
+# Про метод cancel
+# Я видимо не совсем правильно понял пункт про отмену из тз, подумал, что при отмене пользователем,
+# букинг все равно остается в бд, а удаление записи уже остается за админом/стафом
