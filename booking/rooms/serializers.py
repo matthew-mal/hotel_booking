@@ -33,7 +33,7 @@ class RoomSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ("user", "room", "start_date", "end_date", "cost")
+        fields = ("id", "user", "room", "start_date", "end_date", "cost")
 
     def validate(self, data):
         user = self.context["request"].user

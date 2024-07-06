@@ -7,6 +7,9 @@ from .models import Booking, Room
 class RoomFilter(filters.FilterSet):
     start_date = filters.DateFilter(field_name="start_date", method="filter_by_date")
     end_date = filters.DateFilter(field_name="end_date", method="filter_by_date")
+    room_name = filters.CharFilter(
+        field_name="room_name", method="filter_by_room_number"
+    )
 
     class Meta:
         model = Room
@@ -22,6 +25,23 @@ class RoomFilter(filters.FilterSet):
     def filter_by_date(self, queryset, name, value):
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
+        room_name = self.request.query_params.get("room_name")
+
+        if room_name:
+            # Проверяем конкретную комнату
+            if start_date and end_date:
+                is_available = not Booking.objects.filter(
+                    room_name=room_name,
+                    start_date__lt=end_date,
+                    end_date__gt=start_date,
+                ).exists()
+                return (
+                    Room.objects.filter(id=room_name)
+                    if is_available
+                    else Room.objects.none()
+                )
+            else:
+                return Room.objects.filter(id=room_name)
 
         if start_date and end_date:
             # Получаем комнаты, которые забронированы в указанный интервал

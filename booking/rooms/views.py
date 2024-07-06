@@ -1,10 +1,6 @@
-from datetime import datetime
-
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
+from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
-from rest_framework.response import Response
 
 from .filters import RoomFilter
 from .models import Booking, MyUser, Room
