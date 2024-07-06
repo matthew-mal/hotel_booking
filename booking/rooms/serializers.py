@@ -27,14 +27,13 @@ class RoomSerializer(serializers.ModelSerializer):
             "price_per_day",
             "capacity",
             "room_type",
-            "is_available",
         )
 
 
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ("user", "room", "start_date", "end_date", "cost", "canceled")
+        fields = ("user", "room", "start_date", "end_date", "cost")
 
     def validate(self, data):
         user = self.context["request"].user

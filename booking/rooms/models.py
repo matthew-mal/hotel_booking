@@ -25,7 +25,6 @@ class Room(models.Model):
         max_digits=10, decimal_places=2, verbose_name="Price per day"
     )
     capacity = models.IntegerField(verbose_name="Capacity")
-    is_available = models.BooleanField(default=True, verbose_name="Available now?")
     room_type = models.CharField(
         max_length=10,
         choices=ROOM_TYPE_CHOICES,
@@ -49,7 +48,6 @@ class Booking(models.Model):
         null=True,
         verbose_name="Total price",
     )
-    canceled = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.room.name} - {self.user.username} ({self.start_date} to {self.end_date})"
