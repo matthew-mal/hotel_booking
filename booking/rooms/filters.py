@@ -27,21 +27,18 @@ class RoomFilter(filters.FilterSet):
         end_date = self.request.query_params.get("end_date")
         room_name = self.request.query_params.get("room_name")
 
-        if room_name:
+        if room_name and start_date and end_date:
             # Проверяем конкретную комнату
-            if start_date and end_date:
-                is_available = not Booking.objects.filter(
-                    room_name=room_name,
-                    start_date__lt=end_date,
-                    end_date__gt=start_date,
-                ).exists()
-                return (
-                    Room.objects.filter(id=room_name)
-                    if is_available
-                    else Room.objects.none()
-                )
-            else:
-                return Room.objects.filter(id=room_name)
+            is_available = not Booking.objects.filter(
+                room_name=room_name,
+                start_date__lt=end_date,
+                end_date__gt=start_date,
+            ).exists()
+            return (
+                Room.objects.filter(id=room_name)
+                if is_available
+                else Room.objects.none()
+            )
 
         if start_date and end_date:
             # Получаем комнаты, которые забронированы в указанный интервал
