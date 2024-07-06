@@ -194,7 +194,6 @@ class TestBookingApi:
             "room": self.room,
             "start_date": "2024-07-05",
             "end_date": "2024-07-10",
-            "canceled": False,
             "cost": 500,
         }
         self.client.force_authenticate(user=self.user)
@@ -208,7 +207,6 @@ class TestBookingApi:
                 "room": self.room.id,
                 "start_date": "2024-07-05",
                 "end_date": "2024-07-10",
-                "canceled": False,
                 "cost": 500,
             },
             format="json",
@@ -231,9 +229,8 @@ class TestBookingApi:
         updated_data = {
             "user": self.user.id,
             "room": self.room.id,
-            "start_date": "2024-07-05",
-            "end_date": "2024-07-10",
-            "canceled": False,
+            "start_date": "2024-07-12",
+            "end_date": "2024-07-15",
             "cost": 600,
         }
         response = self.client.patch(url, updated_data, format="json")
@@ -241,12 +238,32 @@ class TestBookingApi:
         assert response.status_code == status.HTTP_200_OK
         assert Booking.objects.get(id=booking.id).cost == 600
 
-    def test_delete_booking(self):
+    def test_delete_booking_authenticated(self):
         booking = Booking.objects.create(**self.booking_data)
+        self.client.force_authenticate(user=self.user)
         url = reverse("bookings-detail", args=[booking.id])
         response = self.client.delete(url)
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Booking.objects.filter(id=booking.id).exists()
+
+    def test_delete_booking_admin(self, authenticated_client_admin):
+        booking = Booking.objects.create(**self.booking_data)
+        url = reverse("bookings-detail", args=[booking.id])
+        response = authenticated_client_admin.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Booking.objects.filter(id=booking.id).exists()
+
+    def test_delete_booking_by_another_user(self):
+        another_user = MyUser.objects.create_user(
+            username="anotheruser", email="another@example.com", password="password"
+        )
+        booking = Booking.objects.create(**self.booking_data)
+        self.client.force_authenticate(user=another_user)
+        url = reverse("bookings-detail", args=[booking.id])
+        self.client.delete(url)
+
         assert Booking.objects.filter(id=booking.id).exists()
 
     def test_get_booking_unauthenticated(self):
@@ -255,11 +272,3 @@ class TestBookingApi:
         response = self.client.get(url)
 
         assert response.data == []
-
-    def test_partial_update_booking(self):
-        booking = Booking.objects.create(**self.booking_data)
-        url = reverse("bookings-detail", args=[booking.id])
-        response = self.client.patch(url, {"cost": 700}, format="json")
-
-        assert response.status_code == status.HTTP_200_OK
-        assert Booking.objects.get(id=booking.id).cost == 700

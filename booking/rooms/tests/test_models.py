@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from ..models import Booking, MyUser, Room
@@ -8,8 +10,8 @@ class TestBookingModels:
     def test_booking_creation(self):
         user = MyUser.objects.create(username="testuser", email="test@example.com")
         room = Room.objects.create(name=101, price_per_day=100.00, capacity=2)
-        start_date = "2024-07-01"
-        end_date = "2024-07-05"
+        start_date = datetime.date(2024, 7, 11)
+        end_date = datetime.date(2024, 7, 15)
 
         booking = Booking.objects.create(
             user=user, room=room, start_date=start_date, end_date=end_date
@@ -23,8 +25,8 @@ class TestBookingModels:
     def test_booking_cancellation(self):
         user = MyUser.objects.create(username="testuser", email="test@example.com")
         room = Room.objects.create(name=101, price_per_day=100.00, capacity=2)
-        start_date = "2024-07-01"
-        end_date = "2024-07-05"
+        start_date = datetime.date(2024, 7, 11)
+        end_date = datetime.date(2024, 7, 15)
 
         booking = Booking.objects.create(
             user=user, room=room, start_date=start_date, end_date=end_date
@@ -37,8 +39,8 @@ class TestBookingModels:
     def test_booking_cost_calculation(self):
         user = MyUser.objects.create(username="testuser", email="test@example.com")
         room = Room.objects.create(name=101, price_per_day=100.00, capacity=2)
-        start_date = "2024-07-01"
-        end_date = "2024-7-5"
+        start_date = datetime.date(2024, 7, 11)
+        end_date = datetime.date(2024, 7, 15)
 
         booking = Booking.objects.create(
             user=user, room=room, start_date=start_date, end_date=end_date
